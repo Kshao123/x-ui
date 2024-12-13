@@ -31,7 +31,7 @@ elif cat /proc/version | grep -q -E -i "ubuntu"; then
 release="Ubuntu"
 elif cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
 release="Centos"
-else 
+else
 red "不支持当前的系统，请选择使用Ubuntu,Debian,Centos系统。" && exit
 fi
 vsid=$(grep -i version_id /etc/os-release | cut -d \" -f2 | cut -d . -f1)
@@ -64,7 +64,7 @@ apk add wget curl tar jq tzdata openssl expect git socat iproute2
 apk add virt-what
 else
 if [[ $release = Centos && ${vsid} =~ 8 ]]; then
-cd /etc/yum.repos.d/ && mkdir backup && mv *repo backup/ 
+cd /etc/yum.repos.d/ && mkdir backup && mv *repo backup/
 curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-8.repo
 sed -i -e "s|mirrors.cloud.aliyuncs.com|mirrors.aliyun.com|g " /etc/yum.repos.d/CentOS-*
 sed -i -e "s|releasever|releasever-stream|g" /etc/yum.repos.d/CentOS-*
@@ -113,11 +113,11 @@ fi
 
 if [[ $vi = openvz ]]; then
 TUN=$(cat /dev/net/tun 2>&1)
-if [[ ! $TUN =~ 'in bad state' ]] && [[ ! $TUN =~ '处于错误状态' ]] && [[ ! $TUN =~ 'Die Dateizugriffsnummer ist in schlechter Verfassung' ]]; then 
+if [[ ! $TUN =~ 'in bad state' ]] && [[ ! $TUN =~ '处于错误状态' ]] && [[ ! $TUN =~ 'Die Dateizugriffsnummer ist in schlechter Verfassung' ]]; then
 red "检测到未开启TUN，现尝试添加TUN支持" && sleep 4
 cd /dev && mkdir net && mknod net/tun c 10 200 && chmod 0666 net/tun
 TUN=$(cat /dev/net/tun 2>&1)
-if [[ ! $TUN =~ 'in bad state' ]] && [[ ! $TUN =~ '处于错误状态' ]] && [[ ! $TUN =~ 'Die Dateizugriffsnummer ist in schlechter Verfassung' ]]; then 
+if [[ ! $TUN =~ 'in bad state' ]] && [[ ! $TUN =~ '处于错误状态' ]] && [[ ! $TUN =~ 'Die Dateizugriffsnummer ist in schlechter Verfassung' ]]; then
 green "添加TUN支持失败，建议与VPS厂商沟通或后台设置开启" && exit
 else
 echo '#!/bin/bash' > /root/tun.sh && echo 'cd /dev && mkdir net && mknod net/tun c 10 200 && chmod 0666 net/tun' >> /root/tun.sh && chmod +x /root/tun.sh
@@ -157,7 +157,7 @@ serinstall(){
 green "下载并安装x-ui相关组件……"
 cd /usr/local/
 #curl -L -o /usr/local/x-ui-linux-${cpu}.tar.gz --insecure https://gitlab.com/rwkgyg/x-ui-yg/raw/main/x-ui-linux-${cpu}.tar.gz
-curl -L -o /usr/local/x-ui-linux-${cpu}.tar.gz -# --retry 2 --insecure https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/x-ui-linux-${cpu}.tar.gz
+curl -L -o /usr/local/x-ui-linux-${cpu}.tar.gz -# --retry 2 --https://gh.llkk.cc/insecure https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/x-ui-linux-${cpu}.tar.gz
 tar zxvf x-ui-linux-${cpu}.tar.gz > /dev/null 2>&1
 rm x-ui-linux-${cpu}.tar.gz -f
 cd x-ui
@@ -169,7 +169,7 @@ systemctl start x-ui >/dev/null 2>&1
 cd
 rm /usr/bin/x-ui -f
 #curl -L -o /usr/bin/x-ui --insecure https://gitlab.com/rwkgyg/x-ui-yg/raw/main/1install.sh >/dev/null 2>&1
-curl -L -o /usr/bin/x-ui -# --retry 2 --insecure https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/install.sh
+curl -L -o /usr/bin/x-ui -# --retry 2 --https://gh.llkk.cc/insecure https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/install.sh
 chmod +x /usr/bin/x-ui
 if [[ x"${release}" == x"alpine" ]]; then
 echo '#!/sbin/openrc-run
@@ -179,7 +179,7 @@ directory="/usr/local/${name}"
 pidfile="/var/run/${name}.pid"
 command_background="yes"
 depend() {
-need networking 
+need networking
 }' > /etc/init.d/x-ui
 chmod +x /etc/init.d/x-ui
 rc-update add x-ui default
@@ -247,7 +247,7 @@ readp "设置 x-ui 登录端口[1-65535]（回车跳过为10000-65535之间的�
 sleep 1
 if [[ -z $port ]]; then
 port=$(shuf -i 10000-65535 -n 1)
-until [[ -z $(ss -tunlp | grep -w udp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") && -z $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") ]] 
+until [[ -z $(ss -tunlp | grep -w udp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") && -z $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") ]]
 do
 [[ -n $(ss -tunlp | grep -w udp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") || -n $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") ]] && yellow "\n端口被占用，请重新输入端口" && readp "自定义端口:" port
 done
@@ -303,7 +303,7 @@ resinstall(){
 echo "----------------------------------------------------------------------"
 restart
 #curl -sL https://gitlab.com/rwkgyg/x-ui-yg/-/raw/main/version/version | awk -F "更新内容" '{print $1}' | head -n 1 > /usr/local/x-ui/v
-curl -sL https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/version | awk -F "更新内容" '{print $1}' | head -n 1 > /usr/local/x-ui/v
+curl -https://gh.llkk.cc/sL https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/version | awk -F "更新内容" '{print $1}' | head -n 1 > /usr/local/x-ui/v
 showxuiip
 sleep 2
 xuigo
@@ -342,7 +342,7 @@ fi
 serinstall && sleep 2
 restart
 #curl -sL https://gitlab.com/rwkgyg/x-ui-yg/-/raw/main/version/version | awk -F "更新内容" '{print $1}' | head -n 1 > /usr/local/x-ui/v
-curl -sL https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/version | awk -F "更新内容" '{print $1}' | head -n 1 > /usr/local/x-ui/v
+curl -https://gh.llkk.cc/sL https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/version | awk -F "更新内容" '{print $1}' | head -n 1 > /usr/local/x-ui/v
 green "x-ui更新完成" && sleep 2 && x-ui
 else
 red "输入有误" && update
@@ -378,7 +378,7 @@ rm -rf xuiyg_update
 echo
 green "x-ui已卸载完成"
 echo
-blue "欢迎继续使用x-ui-yg脚本：bash <(curl -Ls https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/install.sh)"
+blue "欢迎继续使用x-ui-yg脚本：bash <(curl -https://gh.llkk.cc/Ls https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/install.sh)"
 echo
 else
 red "输入有误" && uninstall
@@ -387,7 +387,7 @@ fi
 
 reset_config() {
 /usr/local/x-ui/x-ui setting -reset
-sleep 1 
+sleep 1
 portinstall
 pathinstall
 }
@@ -465,7 +465,7 @@ back
 }
 
 bbr() {
-bash <(curl -Ls https://raw.githubusercontent.com/teddysun/across/master/bbr.sh)
+bash <(curl -https://gh.llkk.cc/Ls https://raw.githubusercontent.com/teddysun/across/master/bbr.sh)
 back
 }
 
@@ -695,7 +695,7 @@ elif [ "$menu" = "3" ];then
 gitlabsub
 elif [ "$menu" = "4" ];then
 warpwg
-else 
+else
 show_menu
 fi
 }
@@ -728,8 +728,8 @@ echo "$warp_reserved" | grep -P "reserved" | sed "s/ //g" | sed 's/:"/: "/g' | s
 echo "$warp_info" | grep -P "(private_key|public_key|\"v4\": \"172.16.0.2\"|\"v6\": \"2)" | sed "s/ //g" | sed 's/:"/: "/g' | sed 's/^"/    "/g'
 echo "}"
 }
-warp_info=$(reg) 
-warp_reserved=$(reserved) 
+warp_info=$(reg)
+warp_reserved=$(reserved)
 result
 }
 output=$(warpcode)
@@ -1039,7 +1039,7 @@ white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
 white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 red "🚀X-UI-Clash-Meta配置文件操作如下："
-red "文件目录 /usr/local/x-ui/bin/xui_clashmeta.yaml ，复制自建以yaml文件格式为准" 
+red "文件目录 /usr/local/x-ui/bin/xui_clashmeta.yaml ，复制自建以yaml文件格式为准"
 echo
 red "输入：cat /usr/local/x-ui/bin/xui_clashmeta.yaml 即可显示配置内容" && sleep 2
 echo
@@ -1130,7 +1130,7 @@ cat > /usr/local/x-ui/bin/xui_singbox.json <<EOF
                  "server": "proxydns"
             },
              {
-                "rule_set": "geosite-geolocation-!cn",         
+                "rule_set": "geosite-geolocation-!cn",
                 "query_type": [
                     "A",
                     "AAAA"
@@ -1286,7 +1286,7 @@ dns:
   ipv6: true
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
-  default-nameserver: 
+  default-nameserver:
     - 223.5.5.5
     - 8.8.8.8
   nameserver:
@@ -1311,7 +1311,7 @@ proxy-groups:
   url: https://www.gstatic.com/generate_204
   interval: 300
   strategy: round-robin
-  proxies: 
+  proxies:
 
 #_1
 
@@ -1321,14 +1321,14 @@ proxy-groups:
   url: https://www.gstatic.com/generate_204
   interval: 300
   tolerance: 50
-  proxies:  
+  proxies:
 
-#_2                         
-    
+#_2
+
 - name: 🌍选择代理节点
   type: select
   proxies:
-    - 负载均衡                                         
+    - 负载均衡
     - 自动选择
     - DIRECT
 
@@ -1399,20 +1399,20 @@ EOF
 
 cat > /usr/local/x-ui/bin/cl${i}.log <<EOF
 
-- name: $tag               
+- name: $tag
   type: vless
-  server: $xip1                           
-  port: $vl_port                                
-  uuid: $uuid   
+  server: $xip1
+  port: $vl_port
+  uuid: $uuid
   network: tcp
   udp: true
   tls: true
   flow: xtls-rprx-vision
-  servername: $vl_name                 
-  reality-opts: 
-    public-key: $public_key    
-    short-id: $short_id                      
-  client-fingerprint: $finger   
+  servername: $vl_name
+  reality-opts:
+    public-key: $public_key
+    short-id: $short_id
+  client-fingerprint: $finger
 
 EOF
 echo "vless://$uuid@$xip1:$vl_port?type=tcp&security=reality&sni=$vl_name&pbk=$public_key&flow=xtls-rprx-vision&sid=$short_id&fp=$finger#$tag" >>/usr/local/x-ui/bin/ty.txt
@@ -1442,11 +1442,11 @@ EOF
 
 cat > /usr/local/x-ui/bin/cl${i}.log <<EOF
 
-- name: $tag           
+- name: $tag
   type: vless
-  server: $servip                     
-  port: $vl_port                                  
-  uuid: $uuid  
+  server: $servip
+  port: $vl_port
+  uuid: $uuid
   network: tcp
   tls: true
   udp: true
@@ -1463,10 +1463,10 @@ ws_path=$(jq -r '.streamSettings.wsSettings.path' /usr/local/x-ui/bin/${i}.log)
 tls=$(jq -r '.streamSettings.security' /usr/local/x-ui/bin/${i}.log)
 vl_port=$(jq -r '.port' /usr/local/x-ui/bin/${i}.log)
 if [[ $tls == 'tls' ]]; then
-tls=true 
+tls=true
 tlsw=tls
 else
-tls=false 
+tls=false
 tlsw=''
 fi
 if ! [[ "$vl_port" =~ ^(2052|2082|2086|2095|80|8880|8080|2053|2083|2087|2096|8443|443)$ ]] && [[ -s /usr/local/x-ui/bin/xuicdnip_ws.txt ]]; then
@@ -1522,19 +1522,19 @@ EOF
 
 cat > /usr/local/x-ui/bin/cl${i}.log <<EOF
 
-- name: $tag                         
+- name: $tag
   type: vless
-  server: $servip                       
-  port: $vl_port                                     
-  uuid: $uuid     
+  server: $servip
+  port: $vl_port
+  uuid: $uuid
   udp: true
   tls: $tls
   network: ws
-  servername: $vl_name                    
+  servername: $vl_name
   ws-opts:
-    path: "$ws_path"                             
+    path: "$ws_path"
     headers:
-      Host: $vl_name 
+      Host: $vl_name
 
 EOF
 echo "vless://$uuid@$servip:$vl_port?type=ws&security=$tlsw&sni=$vl_name&path=$ws_path&host=$vl_name#$tag" >>/usr/local/x-ui/bin/ty.txt
@@ -1546,10 +1546,10 @@ ws_path=$(jq -r '.streamSettings.wsSettings.path' /usr/local/x-ui/bin/${i}.log)
 vm_port=$(jq -r '.port' /usr/local/x-ui/bin/${i}.log)
 tls=$(jq -r '.streamSettings.security' /usr/local/x-ui/bin/${i}.log)
 if [[ $tls == 'tls' ]]; then
-tls=true 
+tls=true
 tlsw=tls
 else
-tls=false 
+tls=false
 tlsw=''
 fi
 if ! [[ "$vm_port" =~ ^(2052|2082|2086|2095|80|8880|8080|2053|2083|2087|2096|8443|443)$ ]] && [[ -s /usr/local/x-ui/bin/xuicdnip_ws.txt ]]; then
@@ -1603,19 +1603,19 @@ EOF
 
 cat > /usr/local/x-ui/bin/cl${i}.log <<EOF
 
-- name: $tag                         
+- name: $tag
   type: vmess
-  server: $servip                        
-  port: $vm_port                                     
-  uuid: $uuid       
+  server: $servip
+  port: $vm_port
+  uuid: $uuid
   alterId: 0
   cipher: auto
   udp: true
   tls: $tls
   network: ws
-  servername: $vm_name                    
+  servername: $vm_name
   ws-opts:
-    path: "$ws_path"                             
+    path: "$ws_path"
     headers:
       Host: $vm_name
 
@@ -1628,10 +1628,10 @@ elif grep -q "vmess" "$file" && grep -q "tcp" "$file"; then
 [[ -n $ymip ]] && servip=$ymip || servip=$xip1
 tls=$(jq -r '.streamSettings.security' /usr/local/x-ui/bin/${i}.log)
 if [[ $tls == 'tls' ]]; then
-tls=true 
+tls=true
 tlst=tls
 else
-tls=false 
+tls=false
 tlst=''
 fi
 uuid=$(jq -r '.settings.clients[0].id' /usr/local/x-ui/bin/${i}.log)
@@ -1660,11 +1660,11 @@ EOF
 
 cat > /usr/local/x-ui/bin/cl${i}.log <<EOF
 
-- name: $tag                         
+- name: $tag
   type: vmess
-  server: $servip                        
-  port: $vm_port                                     
-  uuid: $uuid       
+  server: $servip
+  port: $vm_port
+  uuid: $uuid
   alterId: 0
   cipher: auto
   udp: true
@@ -1679,10 +1679,10 @@ elif grep -q "vless" "$file" && grep -q "tcp" "$file"; then
 [[ -n $ymip ]] && servip=$ymip || servip=$xip1
 tls=$(jq -r '.streamSettings.security' /usr/local/x-ui/bin/${i}.log)
 if [[ $tls == 'tls' ]]; then
-tls=true 
+tls=true
 tlst=tls
 else
-tls=false 
+tls=false
 tlst=''
 fi
 uuid=$(jq -r '.settings.clients[0].id' /usr/local/x-ui/bin/${i}.log)
@@ -1710,11 +1710,11 @@ EOF
 
 cat > /usr/local/x-ui/bin/cl${i}.log <<EOF
 
-- name: $tag                         
+- name: $tag
   type: vless
-  server: $servip                       
-  port: $vl_port                                     
-  uuid: $uuid     
+  server: $servip
+  port: $vl_port
+  uuid: $uuid
   udp: true
   tls: $tls
 
@@ -1745,11 +1745,11 @@ EOF
 
 cat > /usr/local/x-ui/bin/cl${i}.log <<EOF
 
-- name: $tag                         
+- name: $tag
   type: trojan
-  server: $servip                       
-  port: $vl_port                                     
-  password: $password    
+  server: $servip
+  port: $vl_port
+  password: $password
   udp: true
   sni: $servip
   skip-cert-verify: false
@@ -1794,17 +1794,17 @@ EOF
 
 cat > /usr/local/x-ui/bin/cl${i}.log <<EOF
 
-- name: $tag                         
+- name: $tag
   type: trojan
-  server: $servip                       
-  port: $vl_port                                     
-  password: $password    
+  server: $servip
+  port: $vl_port
+  password: $password
   udp: true
   sni: $servip
   skip-cert-verify: false
-  network: ws                 
+  network: ws
   ws-opts:
-    path: "$ws_path"                             
+    path: "$ws_path"
     headers:
       Host: $vm_name
 
@@ -1833,10 +1833,10 @@ EOF
 
 cat > /usr/local/x-ui/bin/cl${i}.log <<EOF
 
-- name: $tag                         
+- name: $tag
   type: ss
-  server: $servip                        
-  port: $vm_port                                     
+  server: $servip
+  port: $vm_port
   password: $password
   cipher: $ssmethod
   udp: true
@@ -1891,19 +1891,19 @@ EOF
 
 cat > /usr/local/x-ui/bin/clvltargo.log <<EOF
 
-- name: vl-tls-argo临时-8443                         
+- name: vl-tls-argo临时-8443
   type: vless
-  server: $cdnargo                       
-  port: 8443                                     
-  uuid: $uuid     
+  server: $cdnargo
+  port: 8443
+  uuid: $uuid
   udp: true
   tls: true
   network: ws
-  servername: $argolsym                    
+  servername: $argolsym
   ws-opts:
-    path: "$ws_path"                             
+    path: "$ws_path"
     headers:
-      Host: $argolsym 
+      Host: $argolsym
 
 EOF
 
@@ -1940,19 +1940,19 @@ EOF
 
 cat > /usr/local/x-ui/bin/clvlargo.log <<EOF
 
-- name: vl-argo临时-8880                         
+- name: vl-argo临时-8880
   type: vless
-  server: $cdnargo                       
-  port: 8880                                     
-  uuid: $uuid     
+  server: $cdnargo
+  port: 8880
+  uuid: $uuid
   udp: true
   tls: false
   network: ws
-  servername: $argolsym                    
+  servername: $argolsym
   ws-opts:
-    path: "$ws_path"                             
+    path: "$ws_path"
     headers:
-      Host: $argolsym 
+      Host: $argolsym
 
 EOF
 sed -i "/#_0/r /usr/local/x-ui/bin/clvltargo.log" /usr/local/x-ui/bin/xui_clashmeta.yaml
@@ -2007,19 +2007,19 @@ EOF
 
 cat > /usr/local/x-ui/bin/clvmtargo.log <<EOF
 
-- name: vm-tls-argo临时-8443                        
+- name: vm-tls-argo临时-8443
   type: vmess
-  server: $cdnargo                        
-  port: 8443                                     
-  uuid: $uuid       
+  server: $cdnargo
+  port: 8443
+  uuid: $uuid
   alterId: 0
   cipher: auto
   udp: true
   tls: true
   network: ws
-  servername: $argolsym                    
+  servername: $argolsym
   ws-opts:
-    path: "$ws_path"                             
+    path: "$ws_path"
     headers:
       Host: $argolsym
 
@@ -2059,19 +2059,19 @@ EOF
 
 cat > /usr/local/x-ui/bin/clvmargo.log <<EOF
 
-- name: vm-argo临时-8880                         
+- name: vm-argo临时-8880
   type: vmess
-  server: $cdnargo                       
-  port: 8880                                     
-  uuid: $uuid       
+  server: $cdnargo
+  port: 8880
+  uuid: $uuid
   alterId: 0
   cipher: auto
   udp: true
   tls: false
   network: ws
-  servername: $argolsym                    
+  servername: $argolsym
   ws-opts:
-    path: "$ws_path"                             
+    path: "$ws_path"
     headers:
       Host: $argolsym
 
@@ -2135,19 +2135,19 @@ EOF
 
 cat > /usr/local/x-ui/bin/clvltargoym.log <<EOF
 
-- name: vl-tls-argo固定-8443                         
+- name: vl-tls-argo固定-8443
   type: vless
-  server: $cdnargo                       
-  port: 8443                                     
-  uuid: $uuid     
+  server: $cdnargo
+  port: 8443
+  uuid: $uuid
   udp: true
   tls: true
   network: ws
-  servername: $argoym                    
+  servername: $argoym
   ws-opts:
-    path: "$ws_path"                             
+    path: "$ws_path"
     headers:
-      Host: $argoym 
+      Host: $argoym
 
 EOF
 
@@ -2184,19 +2184,19 @@ EOF
 
 cat > /usr/local/x-ui/bin/clvlargoym.log <<EOF
 
-- name: vl-argo固定-8880                         
+- name: vl-argo固定-8880
   type: vless
-  server: $cdnargo                       
-  port: 8880                                     
-  uuid: $uuid     
+  server: $cdnargo
+  port: 8880
+  uuid: $uuid
   udp: true
   tls: false
   network: ws
-  servername: $argoym                    
+  servername: $argoym
   ws-opts:
-    path: "$ws_path"                             
+    path: "$ws_path"
     headers:
-      Host: $argoym 
+      Host: $argoym
 
 EOF
 sed -i "/#_0/r /usr/local/x-ui/bin/clvltargoym.log" /usr/local/x-ui/bin/xui_clashmeta.yaml
@@ -2251,19 +2251,19 @@ EOF
 
 cat > /usr/local/x-ui/bin/clvmtargoym.log <<EOF
 
-- name: vm-tls-argo固定-8443                        
+- name: vm-tls-argo固定-8443
   type: vmess
-  server: $cdnargo                        
-  port: 8443                                     
-  uuid: $uuid       
+  server: $cdnargo
+  port: 8443
+  uuid: $uuid
   alterId: 0
   cipher: auto
   udp: true
   tls: true
   network: ws
-  servername: $argoym                    
+  servername: $argoym
   ws-opts:
-    path: "$ws_path"                             
+    path: "$ws_path"
     headers:
       Host: $argoym
 
@@ -2303,19 +2303,19 @@ EOF
 
 cat > /usr/local/x-ui/bin/clvmargoym.log <<EOF
 
-- name: vm-argo固定-8880                         
+- name: vm-argo固定-8880
   type: vmess
-  server: $cdnargo                       
-  port: 8880                                     
-  uuid: $uuid       
+  server: $cdnargo
+  port: 8880
+  uuid: $uuid
   alterId: 0
   cipher: auto
   udp: true
   tls: false
   network: ws
-  servername: $argoym                    
+  servername: $argoym
   ws-opts:
-    path: "$ws_path"                             
+    path: "$ws_path"
     headers:
       Host: $argoym
 
@@ -2356,7 +2356,7 @@ case $(uname -m) in
 aarch64) cpu=arm64;;
 x86_64) cpu=amd64;;
 esac
-curl -L -o /usr/local/x-ui/xuiwpph -# --retry 2 --insecure https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/xuiwpph_$cpu
+curl -L -o /usr/local/x-ui/xuiwpph -# --retry 2 --https://gh.llkk.cc/insecure https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/xuiwpph_$cpu
 chmod +x /usr/local/x-ui/xuiwpph
 fi
 if [[ -n $(ps -e | grep xuiwpph) ]]; then
@@ -2365,13 +2365,13 @@ fi
 v4v6
 if [[ -z $v4 ]]; then
 red "IPV4不存在，确保安装过WARP-IPV4模式"
-fi 
+fi
 [[ -n $v6 ]] && sw46=6 || sw46=4
 echo
 readp "设置WARP-plus-Socks5端口（回车跳过端口默认40000）：" port
 if [[ -z $port ]]; then
 port=40000
-until [[ -z $(ss -tunlp | grep -w udp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") && -z $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") ]] 
+until [[ -z $(ss -tunlp | grep -w udp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") && -z $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") ]]
 do
 [[ -n $(ss -tunlp | grep -w udp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") || -n $(ss -tunlp | grep -w tcp | awk '{print $5}' | sed 's/.*://g' | grep -w "$port") ]] && yellow "\n端口被占用，请重新输入端口" && readp "自定义端口:" port
 done
@@ -2473,20 +2473,20 @@ fi
 
 show_menu(){
 clear
-white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"           
+white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo -e "${bblue} ░██     ░██      ░██ ██ ██         ░█${plain}█   ░██     ░██   ░██     ░█${red}█   ░██${plain}  "
 echo -e "${bblue}  ░██   ░██      ░██    ░░██${plain}        ░██  ░██      ░██  ░██${red}      ░██  ░██${plain}   "
 echo -e "${bblue}   ░██ ░██      ░██ ${plain}                ░██ ██        ░██ █${red}█        ░██ ██  ${plain}   "
 echo -e "${bblue}     ░██        ░${plain}██    ░██ ██       ░██ ██        ░█${red}█ ██        ░██ ██  ${plain}  "
 echo -e "${bblue}     ░██ ${plain}        ░██    ░░██        ░██ ░██       ░${red}██ ░██       ░██ ░██ ${plain}  "
 echo -e "${bblue}     ░█${plain}█          ░██ ██ ██         ░██  ░░${red}██     ░██  ░░██     ░██  ░░██ ${plain}  "
-white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" 
+white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 white "甬哥Github项目  ：github.com/yonggekkk"
 white "甬哥Blogger博客 ：ygkkk.blogspot.com"
 white "甬哥YouTube频道 ：www.youtube.com/@ygkkk"
-white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" 
+white "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 white "x-ui-yg脚本快捷方式：x-ui"
-red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" 
+red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 green " 1. 一键安装 x-ui"
 green " 2. 删除卸载 x-ui"
 echo "----------------------------------------------------------------------------------"
@@ -2503,24 +2503,24 @@ green "11. 管理 Warp 查看本地Netflix、ChatGPT解锁情况"
 green "12. 添加WARP-plus-Socks5代理模式 【本地Warp/多地区Psiphon-VPN】"
 green "13. 刷新IP配置及参数显示"
 green " 0. 退出脚本"
-red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" 
+red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 insV=$(cat /usr/local/x-ui/v 2>/dev/null)
 #latestV=$(curl -s https://gitlab.com/rwkgyg/x-ui-yg/-/raw/main/version/version | awk -F "更新内容" '{print $1}' | head -n 1)
-latestV=$(curl -sL https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/version | awk -F "更新内容" '{print $1}' | head -n 1)
+latestV=$(curl -sL https://gh.llkk.cc/https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/version | awk -F "更新内容" '{print $1}' | head -n 1)
 if [[ -f /usr/local/x-ui/v ]]; then
 if [ "$insV" = "$latestV" ]; then
 echo -e "当前 x-ui-yg 脚本最新版：${bblue}${insV}${plain} (已安装)"
 else
 echo -e "当前 x-ui-yg 脚本版本号：${bblue}${insV}${plain}"
 echo -e "检测到最新 x-ui-yg 脚本版本号：${yellow}${latestV}${plain} (可选择6进行更新)"
-echo -e "${yellow}$(curl -sL https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/version)${plain}"
+echo -e "${yellow}$(curl -sL https://gh.llkk.cc/https://raw.githubusercontent.com/yonggekkk/x-ui-yg/main/version)${plain}"
 #echo -e "${yellow}$(curl -sL https://gitlab.com/rwkgyg/x-ui-yg/-/raw/main/version/version)${plain}"
 fi
 else
 echo -e "当前 x-ui-yg 脚本版本号：${bblue}${latestV}${plain}"
 echo -e "请先选择 1 ，安装 x-ui-yg 脚本"
 fi
-red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" 
+red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo -e "VPS状态如下："
 echo -e "系统:$blue$op$plain  \c";echo -e "内核:$blue$version$plain  \c";echo -e "处理器:$blue$cpu$plain  \c";echo -e "虚拟化:$blue$vi$plain  \c";echo -e "BBR算法:$blue$bbr$plain"
 v4v6
@@ -2531,13 +2531,13 @@ if [[ "$v4" == "104.28"* ]]; then
 w4="【WARP】"
 fi
 if [[ -z $v4 ]]; then
-vps_ipv4='无IPV4'      
+vps_ipv4='无IPV4'
 vps_ipv6="$v6"
 elif [[ -n $v4 && -n $v6 ]]; then
-vps_ipv4="$v4"    
+vps_ipv4="$v4"
 vps_ipv6="$v6"
 else
-vps_ipv4="$v4"    
+vps_ipv4="$v4"
 vps_ipv6='无IPV6'
 fi
 echo -e "本地IPV4地址：$blue$vps_ipv4$w4$plain   本地IPV6地址：$blue$vps_ipv6$w6$plain"
@@ -2664,7 +2664,7 @@ if [ "$xpath" == "/" ]; then
 pathk="$sred【严重安全提示: 请进入面板设置，添加url根路径】$plain"
 fi
 echo -e "x-ui登录信息如下："
-echo -e "$blue$acp$pathk$plain" 
+echo -e "$blue$acp$pathk$plain"
 if [[ -n $xip2 ]]; then
 xuimb="http://${xip1}:${xport}${xpath} 或者 http://${xip2}:${xport}${xpath}"
 else
@@ -2685,10 +2685,10 @@ else
 echo -e "x-ui登录信息如下："
 echo -e "$red未安装x-ui，无显示$plain"
 fi
-red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" 
+red "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
 echo
 readp "请输入数字【0-13】:" Input
-case "$Input" in     
+case "$Input" in
  1 ) check_uninstall && xuiinstall;;
  2 ) check_install && uninstall;;
  3 ) check_install && changeserv;;
@@ -2702,7 +2702,7 @@ case "$Input" in
  11 ) cfwarp;;
  12 ) check_install && insxuiwpph;;
  13 ) check_install && showxuiip && show_menu;;
- * ) exit 
+ * ) exit
 esac
 }
 show_menu
