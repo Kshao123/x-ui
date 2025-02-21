@@ -74,13 +74,13 @@ fi
 
 if [ -x "$(command -v apt-get)" ]; then
 apt update -y
-apt install jq tzdata -y
+apt install jq tzdata socat cron -y
 elif [ -x "$(command -v yum)" ]; then
 yum update -y && yum install epel-release -y
-yum install jq tzdata -y
+yum install jq tzdata socat -y
 elif [ -x "$(command -v dnf)" ]; then
 dnf update -y
-dnf install jq tzdata -y
+dnf install jq tzdata socat -y
 fi
 if [ -x "$(command -v yum)" ] || [ -x "$(command -v dnf)" ]; then
 if ! command -v "cronie" &> /dev/null; then
@@ -2436,6 +2436,7 @@ echo '
 印度（IN）
 意大利 (IT)
 日本（JP）
+立陶宛（LT）
 拉脱维亚（LV）
 荷兰（NL）
 挪威 (NO)
@@ -2566,6 +2567,7 @@ IE) showgj="爱尔兰" ;;
 IN) showgj="印度" ;;
 IT) showgj="意大利" ;;
 JP) showgj="日本" ;;
+LT) showgj="立陶宛" ;;
 LV) showgj="拉脱维亚" ;;
 NL) showgj="荷兰" ;;
 NO) showgj="挪威" ;;
@@ -2678,7 +2680,7 @@ fi
 if [[ -f /root/ygkkkca/ca.log ]]; then
 echo -e "$blue登录地址(域名加密模式-安全)：https://$(cat /root/ygkkkca/ca.log 2>/dev/null):${xport}${xpath}$plain"
 else
-echo -e "$blue强烈建议申请域名证书并开启域名(https)登录方式，以确保面板数据安全$plain"
+echo -e "$sred强烈建议申请域名证书并开启域名(https)登录方式，以确保面板数据安全$plain"
 fi
 fi
 else
